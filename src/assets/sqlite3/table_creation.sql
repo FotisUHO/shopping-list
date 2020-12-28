@@ -32,11 +32,12 @@ create table if not exists lists (
 list_id integer primary key autoincrement,
 list_name text not null,
 time_created datetime default current_timestamp,
-time_due datetime,
-type_id integer not null);
+time_due datetime default current_timestamp,
+type_id integer default 0 not null);
 
 create table if not exists list_items(
 list_item_id integer primary key autoincrement,
+state integer not null,
 item_id integer not null,
 list_id integer not null,
 foreign key (item_id)
@@ -45,3 +46,7 @@ foreign key (list_id)
 references item_group (item_id)
 on delete cascade
 on update no action);
+
+INSERT INTO lists (list_name) VALUES ('Super Market');
+INSERT INTO lists (list_name) VALUES ('Butcher');
+INSERT INTO lists (list_name) VALUES ('Pharmacy');
