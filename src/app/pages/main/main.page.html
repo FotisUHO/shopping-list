@@ -27,10 +27,12 @@
   <ion-button expand="block" (click)="loadShoppingLists()"> Show List</ion-button>
   <ion-list>
     <ion-item button *ngFor="let list of shoppingListCollection | async ">
+      <ion-content>
       <ion-label>
         <h2>{{ list.name }}</h2>
-        <p>{{ list.created }}</p>
+        <p>{{getPrettyTimestamp(list.created)}}</p>
       </ion-label>
+      </ion-content>
     </ion-item>
   </ion-list>
 </div>

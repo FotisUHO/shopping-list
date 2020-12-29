@@ -20,9 +20,9 @@ export class MainPage implements OnInit {
 
   constructor(private db: DatabaseService) {
     this.DateObject = new Date();
-    this.dayOfWeek = this.getDayOfWeek();
+    this.dayOfWeek = this.getDayOfWeek( this.DateObject.getDay() );
     this.dateToday = this.DateObject.getDate().toString();
-    this.currentMonth = this.getMonth();
+    this.currentMonth = this.getMonth(this.DateObject.getMonth());
   }
 
   ngOnInit() {
@@ -44,41 +44,50 @@ export class MainPage implements OnInit {
     });
   }
 
-   getDayOfWeek()
-   {
-     switch (this.DateObject.getDay())
-     {
-       case 0:
-         return 'Sunday';
-         break;
-       case 1:
-         return 'Monday';
-         break;
-       case 2:
-         return 'Tuesday';
-         break;
-       case 3:
-         return 'Wednesday';
-         break;
-       case 4:
-         return 'Thursday';
-         break;
-       case 5:
-         return 'Friday';
-         break;
-       case 6:
-         return 'Saturday';
-         break;
-       default:
-         return 'Unkown day';
-         console.log('Unknown day given by Date lbr');
-         break;
-     }
-   }
-
-  getMonth()
+  getPrettyTimestamp(sqliteΤimestamp: string)
   {
-    switch (this.DateObject.getDay())
+    const whitespaceChar = ' ';
+    const timestamp = sqliteΤimestamp.split(' ');
+    const date = timestamp[0].split('-');
+    const month: number = (+date[1]) - 1;
+    return (date[2] + whitespaceChar + this.getMonth((month)) + whitespaceChar + date[0]);
+  }
+
+  getDayOfWeek(date: number)
+  {
+    switch (date)
+    {
+      case 0:
+        return 'Sunday';
+        break;
+      case 1:
+        return 'Monday';
+        break;
+      case 2:
+        return 'Tuesday';
+        break;
+      case 3:
+        return 'Wednesday';
+        break;
+      case 4:
+        return 'Thursday';
+        break;
+      case 5:
+        return 'Friday';
+        break;
+      case 6:
+        return 'Saturday';
+        break;
+      default:
+        return 'Unkown day';
+        console.log('Unknown day given by Date lbr');
+        break;
+    }
+  }
+
+  getMonth(month: number)
+  {
+    switch (month)
     {
       case 0:
         return 'January';

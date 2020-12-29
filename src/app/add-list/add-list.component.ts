@@ -37,9 +37,13 @@ export class AddListComponent implements OnInit {
         }, {
           text: 'Okay',
           handler: data => {
-            this.createList(data.Name);
-            console.log('**** ' + data.Name);
-            console.log('Confirm Okay');
+            if ( data.Name.length > 0)
+            {
+              this.createList(data.Name);
+              console.log('**** ' + data.Name);
+              console.log('Confirm Okay');
+            }
+            console.log('Empty List name');
           }
         }
       ]
