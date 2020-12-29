@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {DatabaseService} from '../../services/database.service';
 import {Shopping_List} from '../../services/Shopping_List';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-main',
@@ -15,7 +16,7 @@ export class MainPage implements OnInit {
 
   DateObject: Date;
 
-  shoppingListCollection: Shopping_List[] = [];
+  shoppingListCollection: Observable<any[]>;
 
   constructor(private db: DatabaseService) {
     this.DateObject = new Date();
@@ -25,12 +26,22 @@ export class MainPage implements OnInit {
   }
 
   ngOnInit() {
+    this.db.getDatabaseState().subscribe( rdyMessage => {
+      if (rdyMessage)
+      {
+        this.shoppingListCollection = this.db.getLists();
+      }
+    });
   }
 
   loadShoppingLists()
   {
-    this.shoppingListCollection = this.db.loadLists();
-    console.log(' **** Debug-Main : ' + this.shoppingListCollection[0].name);
+    this.db.getDatabaseState().subscribe( rdyMessage => {
+      if (rdyMessage)
+      {
+        this.shoppingListCollection = this.db.getLists();
+      }
+    });
   }
 
    getDayOfWeek()

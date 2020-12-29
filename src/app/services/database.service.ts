@@ -13,7 +13,7 @@ export class DatabaseService {
   private database: SQLiteObject;
   private dbReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  shoppingLists: Shopping_List[] = [];
+  shoppingLists = new BehaviorSubject([]);
 
   constructor(private plt: Platform, private sqlitePorter: SQLitePorter, private sqlite: SQLite, private http: HttpClient) {
     this.plt.ready().then(() => {
@@ -33,11 +33,22 @@ export class DatabaseService {
         .subscribe(sql => {
           this.sqlitePorter.importSqlToDb(this.database, sql)
               .then(_ => {
+                  this.loadLists();
                   console.log('***** Debug - Init Database');
-                this.dbReady.next(true);
+                  this.dbReady.next(true);
               })
               .catch(e => console.error(e));
         });
+  }
+
+  getDatabaseState()
+  {
+      return this.dbReady.asObservable();
+  }
+
+  getLists(): Observable<any[]>
+  {
+      return this.shoppingLists.asObservable();
   }
 
   addList(listname: string)
@@ -45,20 +56,20 @@ export class DatabaseService {
       const data = [listname];
       this.database.executeSql('INSERT INTO lists (list_name) VALUES (?)', data).then(sqlAnswer => {
           console.log('***** Debug - Adding Shopping List : ' + listname);
+          this.loadLists();
       });
   }
 
   loadLists()
   {
-      console.log('***** Invoke load list.');
-      this.database.executeSql('SELECT * from lists', []).then(data =>
+      return this.database.executeSql('SELECT * from lists', []).then(data =>
       {
-          const shoppingListCollection: Shopping_List[] = [];
           if (!data.empty)
           {
+              const lists = [];
               for (let i = 0; i < data.rows.length; i++)
               {
-                  shoppingListCollection.push(
+                  lists.push(
                       {
                           id: data.rows.item(i).list_id,
                           name: data.rows.item(i).list_name,
@@ -68,14 +79,12 @@ export class DatabaseService {
                           list_size: 0
                       });
               }
+              this.shoppingLists.next(lists);
           }
-          console.log('***** Debug - Listname : ' + shoppingListCollection[0].name);
-          this.shoppingLists = shoppingListCollection;
       }).catch(e => {
           console.log('***** Debug - Error : ');
           console.error(e);
       });
-      return this.shoppingLists;
   }
 }
 
