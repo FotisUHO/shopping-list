@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import {DatabaseService} from '../../services/database.service';
-import {Shopping_List} from '../../services/Shopping_List';
 import {Observable} from 'rxjs';
 
 @Component({
@@ -26,16 +25,6 @@ export class MainPage implements OnInit {
   }
 
   ngOnInit() {
-    this.db.getDatabaseState().subscribe( rdyMessage => {
-      if (rdyMessage)
-      {
-        this.shoppingListCollection = this.db.getLists();
-      }
-    });
-  }
-
-  loadShoppingLists()
-  {
     this.db.getDatabaseState().subscribe( rdyMessage => {
       if (rdyMessage)
       {

@@ -4,7 +4,7 @@ import { SQLitePorter } from '@ionic-native/sqlite-porter/ngx';
 import { HttpClient } from '@angular/common/http';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
 import { Platform } from '@ionic/angular';
-import {Shopping_List} from './Shopping_List';
+import {ShoppingList} from './Shopping_List';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +14,7 @@ export class DatabaseService {
   private dbReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   shoppingLists = new BehaviorSubject([]);
+  specificShoppingList = new BehaviorSubject([]);
 
   constructor(private plt: Platform, private sqlitePorter: SQLitePorter, private sqlite: SQLite, private http: HttpClient) {
     this.plt.ready().then(() => {
@@ -49,6 +50,21 @@ export class DatabaseService {
   getLists(): Observable<any[]>
   {
       return this.shoppingLists.asObservable();
+  }
+
+  getSpecificList(listId): Promise<ShoppingList>
+  {
+      // @ts-ignore
+      return this.database.executeSql('SELECT * FROM lists WHERE list_id = ?', [listId]).then(data => {
+          return{
+              id: data.rows.item(0).list_id,
+              name: data.rows.item(0).list_name,
+              created: data.rows.item(0).time_created,
+              due: data.rows.item(0).time_due,
+              type: data.rows.item(0).type_id,
+              listSize: 0
+          };
+      });
   }
 
   addList(listname: string)

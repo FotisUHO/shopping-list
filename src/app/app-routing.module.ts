@@ -22,6 +22,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/list-view/list-view.module').then( m => m.ListViewPageModule)
   },
   {
+    path: 'list-view/:id',
+    loadChildren: () => import('./pages/list-view/list-view.module').then( m => m.ListViewPageModule)
+  },
+  {
     path: 'future-list',
     loadChildren: () => import('./pages/future-list/future-list.module').then( m => m.FutureListPageModule)
   },

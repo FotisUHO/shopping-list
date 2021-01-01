@@ -1,9 +1,19 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>list_view</ion-title>
+    <ion-title>{{ShoppingListString}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+    <ion-list>
+      <ion-button expand="block"> Future Lists</ion-button>
+      <div *ngFor="let list of shoppingList">
+        <ion-item>
+          <ion-label>
+            <h2>{{ list.name }}</h2>
+<!--            <p>{{ list.due }}</p>-->
+          </ion-label>
+        </ion-item>
+      </div>
+    </ion-list>
 </ion-content>
