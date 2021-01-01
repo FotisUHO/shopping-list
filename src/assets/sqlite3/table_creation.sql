@@ -22,9 +22,9 @@ foreign key (colour_id)
 references colour (colour_id));
 
 create table if not exists items (
-item_id integer primary key,
+item_id integer primary key autoincrement,
 item_name text,
-group_id integer not null,
+group_id integer default 0 not null,
 foreign key (group_id)
 references item_group (group_id));
 
@@ -37,7 +37,8 @@ type_id integer default 0 not null);
 
 create table if not exists list_items(
 list_item_id integer primary key autoincrement,
-state integer not null,
+item_name text not null,
+state integer default 0 not null,
 item_id integer not null,
 list_id integer not null,
 foreign key (item_id)

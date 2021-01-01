@@ -4,7 +4,8 @@ import { SQLitePorter } from '@ionic-native/sqlite-porter/ngx';
 import { HttpClient } from '@angular/common/http';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
 import { Platform } from '@ionic/angular';
-import {ShoppingList} from './Shopping_List';
+import ShoppingList from './Shopping_List';
+import ItemOfList from './ItemOfList';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class DatabaseService {
 
   shoppingLists = new BehaviorSubject([]);
   specificShoppingList = new BehaviorSubject([]);
+  itemsOFList = new BehaviorSubject([]);
 
   constructor(private plt: Platform, private sqlitePorter: SQLitePorter, private sqlite: SQLite, private http: HttpClient) {
     this.plt.ready().then(() => {
@@ -35,6 +37,7 @@ export class DatabaseService {
           this.sqlitePorter.importSqlToDb(this.database, sql)
               .then(_ => {
                   this.loadLists();
+                  // this.loadListItems();
                   console.log('***** Debug - Init Database');
                   this.dbReady.next(true);
               })
@@ -50,6 +53,11 @@ export class DatabaseService {
   getLists(): Observable<any[]>
   {
       return this.shoppingLists.asObservable();
+  }
+
+  getItemsForList(listId: number): Observable<any[]>
+  {
+      return this.itemsOFList.asObservable();
   }
 
   getSpecificList(listId): Promise<ShoppingList>
@@ -102,6 +110,62 @@ export class DatabaseService {
           console.error(e);
       });
   }
+
+    addItem(itemName: string, listId: number)
+    {
+        console.log(' **** Service is adding item.');
+        const data = [itemName];
+        let itemId: any[] = [];
+        return this.database.executeSql('INSERT INTO items(item_name) VALUES (?)', data).then( res => {
+            this.database.executeSql('SELECT item_id FROM items WHERE item_name LIKE ?', data).then( res2 => {
+                if (!res2.empty)
+                {
+                    itemId = res2.rows.item(0).item_id;
+                }
+                const dataForList = [itemName, itemId, listId];
+                // tslint:disable-next-line:max-line-length
+                return this.database.executeSql('INSERT INTO list_items(item_name, item_id, list_id) VALUES (?, ?, ?)', dataForList).then( res3 => {
+                    this.loadListItems(listId);
+                }).catch( e => {
+                    console.log(' ERROR : Unable to add list item.');
+                    console.error(e);
+                });
+            }).catch( e => {
+                console.log(' ERROR : Unable to find item_id.');
+                console.error(e);
+            });
+        }).catch( e => {
+            console.log(' ERROR : Unable to add item');
+            console.error(e);
+        });
+    }
+
+    private loadListItems(listId: number)
+    {
+        console.log(' **** Service is loading the list of items.');
+        const data = [listId];
+        return this.database.executeSql('SELECT * FROM list_items WHERE list_id = ?', data ).then( res => {
+            const items: ItemOfList[] = [];
+            if ( res.rows.length > 0)
+            {
+                for (let i = 0; i < res.rows.length; i++)
+                {
+                    items.push(
+                        {
+                            id: res.rows.item(i).list_item_id,
+                            name: res.rows.item(i).item_name,
+                            state: res.rows.item(i).state,
+                            itemId: res.rows.item(i).item_id,
+                            listId: res.rows.item(i).list_id
+                        });
+                }
+            }
+            this.itemsOFList.next(items);
+        }).catch( e => {
+            console.log(' ERROR : Unable to find a collection of items for this list.');
+            console.error(e);
+        });
+    }
 }
 
 

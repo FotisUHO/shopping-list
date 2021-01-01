@@ -1,19 +1,63 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>{{ShoppingListString}}</ion-title>
-  </ion-toolbar>
-</ion-header>
+<div class="flex-container">
+    <div>
+        <ion-header>
+            <ion-toolbar>
+                <ion-item>
+                    <ion-buttons left>
+                        <ion-button [routerLink]="['/' + 'main']">
+                            <ion-icon name="home-sharp"></ion-icon>
+                        </ion-button>
+                    </ion-buttons>
+                    <ion-title right>  {{ShoppingListString}}</ion-title>
+                </ion-item>
+            </ion-toolbar>
+        </ion-header>
+    </div>
+    <div>
+        <ion-card>
+            <ion-label>Add item : </ion-label>
+            <ion-input type="text" [(ngModel)]="itemName" text-right id="input" ></ion-input>
+            <ion-button expand="block" (click)="addItem()">
+                <ion-icon name="add-circle-sharp"></ion-icon>
+            </ion-button>
+        </ion-card>
+    </div>
+    <div>
+        <ion-card>
+            <ion-item>
+                <h2>    List ID :  {{ listId }}</h2>
+            </ion-item>
+            <ion-item>
+                <p>   Date of creation : </p>
+                <ion-chip color="tertiary">
+                    <ion-label>{{ dateCreated }}</ion-label>
+                </ion-chip>
+            </ion-item>
+            <ion-item>
+                <p>   Date Due : </p>
+                <ion-chip color="tertiary">
+                    <ion-label>{{ dateDue }}</ion-label>
+                </ion-chip>
+            </ion-item>
+        </ion-card>
+    </div>
+    <div>
+        <ion-scroll style="height: 200px">
+            <ion-list>
+            </ion-list>
+        </ion-scroll>
+    </div>
+</div>
 
 <ion-content>
-    <ion-list>
-      <ion-button expand="block"> Future Lists</ion-button>
-      <div *ngFor="let list of shoppingList">
-        <ion-item>
-          <ion-label>
-            <h2>{{ list.name }}</h2>
-<!--            <p>{{ list.due }}</p>-->
-          </ion-label>
-        </ion-item>
-      </div>
-    </ion-list>
+    <ion-scroll style="height: 200px">
+        <ion-list>
+            <div *ngFor="let item of itemsOfList | async ">
+                <ion-label>
+                    <h2>{{ item.name }}</h2>
+<!--                    <p>{{getPrettyTimestamp(list.created)}}</p>-->
+                </ion-label>
+            </div>
+        </ion-list>
+    </ion-scroll>
 </ion-content>
