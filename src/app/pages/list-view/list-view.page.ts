@@ -19,14 +19,34 @@ export class ListViewPage implements OnInit {
   listId: number;
   dateCreated: string;
   dateDue: string;
+  minDate: string;
+  maxDate: string;
 
   itemName: string;
   itemsOfList: Observable<any>;
 
+  customPickerOptions: any;
+
   // tslint:disable-next-line:no-shadowed-variable
-  constructor(private route: ActivatedRoute, private db: DatabaseService, private router: Router)
-  {
+  constructor(private route: ActivatedRoute, private db: DatabaseService, private router: Router) {
+    const today = new Date();
+    let day = String('0' + today.getDate()).slice(-2);
+    let month = String('0' + (today.getMonth())).slice(-2);
+    let year = String(today.getFullYear());
+    // Month is in purpose 1 not incremented to let the user use past dates for 1 month
+    if (month === '00') {
+      month = '12';
+      year = String(today.getFullYear() - 1);
+    }
+    this.minDate = year + '-' + month + '-' + day;
+    day = String('0' + today.getDate()).slice(-2);
+    month = String('0' + (today.getMonth() + 1)).slice(-2);
+    year = String(today.getFullYear() + 3);
+    this.maxDate = year + '-' + month + '-' + day;
+    console.log(' **** - Debug minDate = ' + this.minDate + ' maxDate = ' + this.maxDate);
   }
+
+
 
   ngOnInit()
   {
@@ -47,6 +67,12 @@ export class ListViewPage implements OnInit {
         this.itemsOfList = this.db.getItemsForList(this.listId);
       }
     });
+  }
+
+  updateDueDate(event: any)
+  {
+    console.log(' **** Debug - Update selected Date : ' + event.target.value);
+    this.db.updateDueDate(event.target.value, this.listId);
   }
 
   addItem()

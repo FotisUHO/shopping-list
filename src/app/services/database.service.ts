@@ -167,6 +167,21 @@ export class DatabaseService {
             console.error(e);
         });
     }
+
+    updateDueDate(dueDate: string, listId: number)
+    {
+        const sqliteDate: string[] = dueDate.split('T');
+        const sqliteDatetime = sqliteDate[0] + (' 23:59:59');
+        const data = [sqliteDatetime, listId];
+        console.log(' Update timestamp : ' + data[0]);
+        this.database.executeSql('UPDATE lists SET time_due = ? WHERE list_id IS ?', data).then( res =>
+        {
+            this.loadLists();
+        }).catch( e => {
+            console.log(' ERROR : Unable to update date time Due.');
+            console.error(e);
+        });
+    }
 }
 
 

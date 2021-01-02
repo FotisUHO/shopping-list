@@ -27,20 +27,21 @@
     <div>
         <ion-card>
             <ion-item>
-                <h2>    List ID :  {{ listId }}</h2>
-            </ion-item>
-            <ion-item>
-                <p>   Date of creation : </p>
+                <ion-label>Creation :</ion-label>
                 <ion-chip color="tertiary">
-                    <ion-label>{{ dateCreated }}</ion-label>
+                    <ion-datetime value={{dateCreated}} disabled></ion-datetime>
+                </ion-chip>
+                <ion-label>Date Due : </ion-label>
+                <ion-chip color="tertiary">
+<!--                    <ion-datetime value={{dateDue}} placeholder="Select Date"></ion-datetime>-->
+                    <ion-datetime placeholder="Select Date" displayFormat="YYYY-MM-DD" min="{{minDate}}" max="{{maxDate}}" value={{dateDue}}
+                        (ionChange)="updateDueDate($event)">
+                    </ion-datetime>
                 </ion-chip>
             </ion-item>
-            <ion-item>
-                <p>   Date Due : </p>
-                <ion-chip color="tertiary">
-                    <ion-label>{{ dateDue }}</ion-label>
-                </ion-chip>
-            </ion-item>
+        </ion-card>
+        <<ion-card>>
+
         </ion-card>
     </div>
     <div>
