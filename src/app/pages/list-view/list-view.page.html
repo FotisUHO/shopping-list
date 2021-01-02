@@ -15,11 +15,13 @@
     </div>
     <div>
         <ion-card>
-            <ion-label>Add item : </ion-label>
-            <ion-input type="text" [(ngModel)]="itemName" text-right id="input" ></ion-input>
-            <ion-button expand="block" (click)="addItem()">
-                <ion-icon name="add-circle-sharp"></ion-icon>
-            </ion-button>
+            <ionic-form>
+                <ion-label>Add item : </ion-label>
+                <ion-input type="text" [(ngModel)]="itemName" text-right id="input"></ion-input>
+                <ion-button expand="block" (click)="addItem()">
+                    <ion-icon name="add-circle-sharp"></ion-icon>
+                </ion-button>
+            </ionic-form>
         </ion-card>
     </div>
     <div>
@@ -53,10 +55,12 @@
     <ion-scroll style="height: 200px">
         <ion-list>
             <div *ngFor="let item of itemsOfList | async ">
-                <ion-label>
-                    <h2>{{ item.name }}</h2>
-<!--                    <p>{{getPrettyTimestamp(list.created)}}</p>-->
-                </ion-label>
+                <ion-item>
+                    <ion-label>
+                        <h2>{{ item.name }}</h2>
+                    </ion-label>
+                    <ion-checkbox color="secondary" checked slot="start"></ion-checkbox>
+                </ion-item>
             </div>
         </ion-list>
     </ion-scroll>

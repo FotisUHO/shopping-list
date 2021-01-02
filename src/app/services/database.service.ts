@@ -57,6 +57,7 @@ export class DatabaseService {
 
   getItemsForList(listId: number): Observable<any[]>
   {
+      this.loadListItems(listId);
       return this.itemsOFList.asObservable();
   }
 

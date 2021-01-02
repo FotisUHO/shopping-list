@@ -52,6 +52,7 @@ export class ListViewPage implements OnInit {
   addItem()
   {
     this.db.addItem(this.itemName, this.listId);
+    this.itemName = '';
   }
 
   getPrettyTimestamp(sqliteΤimestamp: string)
