@@ -227,6 +227,24 @@ export class DatabaseService {
             console.error(e);
         });
     }
+
+    getListsPerDate(startTimestamp: string, endTimestamp): Observable<any[]>
+    {
+        return undefined;
+    }
+
+    updateItemState(value: number, itemID: number)
+    {
+        const data = [value, itemID];
+        console.log(' Update item state : ' + data[0] + ' - ' + data[1]);
+        this.database.executeSql('UPDATE list_items SET state = ? WHERE list_item_id IS ?', data).then( res =>
+        {
+            this.loadLists();
+        }).catch( e => {
+            console.log(' ERROR : Unable to update date time Due.');
+            console.error(e);
+        });
+    }
 }
 
 

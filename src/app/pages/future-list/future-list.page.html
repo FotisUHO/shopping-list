@@ -5,5 +5,16 @@
 </ion-header>
 
 <ion-content>
-
+  <ion-scroll style="height: 200px">
+    <ion-list>
+      <div *ngFor="let list of shoppingListCollection | async ">
+        <ion-item [routerLink]="['/' + 'list-view' + '/' + list.id]">
+          <ion-label>
+            <h2>{{ list.name }}</h2>
+            <p>{{getPrettyTimestamp(list.created)}}</p>
+          </ion-label>
+        </ion-item>
+      </div>
+    </ion-list>
+  </ion-scroll>
 </ion-content>

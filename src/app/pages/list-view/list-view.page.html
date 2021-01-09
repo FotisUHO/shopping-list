@@ -71,7 +71,8 @@
                     <ion-label>
                         <h2>{{ item.name }}</h2>
                     </ion-label>
-                    <ion-checkbox color="secondary" checked slot="start"></ion-checkbox>
+<!--                    <ion-checkbox color="secondary" (ionChange)="updateState($event, item.id)" checked="{{item.state === 0?false: true}}" slot="start"></ion-checkbox>-->
+                    <ion-checkbox color="secondary" (ionChange)="updateState($event, item.id)" checked="{{!!item.state}}" slot="start"></ion-checkbox>
                 </ion-item>
             </div>
         </ion-list>

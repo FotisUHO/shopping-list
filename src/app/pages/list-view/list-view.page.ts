@@ -85,38 +85,38 @@ export class ListViewPage implements OnInit {
 
   provideSimilarItems(event: any)
   {
-    let ids: number[];
-    let names: string[];
-    this.db.getSuggestedWords(event.target.value).subscribe( (res: SuggestedWord[]) => {
-      ids = res.map(x => x.itemID);
-      names = res.map(y => y.itemName);
-    });
-    let i = 0;
-    // ids.forEach( arr => {
+    // let ids: number[];
+    // let names: string[];
+    // this.db.getSuggestedWords(event.target.value).subscribe( (res: SuggestedWord[]) => {
+    //   ids = res.map(x => x.itemID);
+    //   names = res.map(y => y.itemName);
+    // });
+    // let i = 0;
+    // // ids.forEach( arr => {
+    // //   const suggestedWordAr = {} as SuggestedWordImpl;
+    // //   suggestedWordAr.itemID = ids[i];
+    // //   suggestedWordAr.itemName = names[i];
+    // //   i++;
+    // // }).then(() => {
+    // //   console.log(' **** Debug - Provide similar words : ' + ids[i] + ':' + names[i]);
+    // // };
+    // for ( const items of ids)
+    // {
+    //   console.log(' **** Debug - Provide similar words : ' + ids[i] + ':' + names[i]);
     //   const suggestedWordAr = {} as SuggestedWordImpl;
     //   suggestedWordAr.itemID = ids[i];
     //   suggestedWordAr.itemName = names[i];
+    //   // const item: SuggestedWord = new SuggestedWordImpl(items, names[i]);
+    //   this.similarWordsArray.push(suggestedWordAr);
     //   i++;
-    // }).then(() => {
-    //   console.log(' **** Debug - Provide similar words : ' + ids[i] + ':' + names[i]);
-    // };
-    for ( const items of ids)
-    {
-      console.log(' **** Debug - Provide similar words : ' + ids[i] + ':' + names[i]);
-      const suggestedWordAr = {} as SuggestedWordImpl;
-      suggestedWordAr.itemID = ids[i];
-      suggestedWordAr.itemName = names[i];
-      // const item: SuggestedWord = new SuggestedWordImpl(items, names[i]);
-      this.similarWordsArray.push(suggestedWordAr);
-      i++;
-    }
-    // this.db.getDatabaseState().subscribe( rdyMessage => {
-    //   if (rdyMessage)
-    //   {
-    //     this.similarWords = this.db.getSuggestedWords(event.target.value);
-    //   }
-    //   console.log(' **** Debug - Provide similar words : ');
-    // });
+    // }
+    // // this.db.getDatabaseState().subscribe( rdyMessage => {
+    // //   if (rdyMessage)
+    // //   {
+    // //     this.similarWords = this.db.getSuggestedWords(event.target.value);
+    // //   }
+    // //   console.log(' **** Debug - Provide similar words : ');
+    // // });
   }
 
   getPrettyTimestamp(sqliteΤimestamp: string)
@@ -136,6 +136,21 @@ export class ListViewPage implements OnInit {
       console.log(' ERROR : Unable to find a collection of items for this list.');
       console.error(e);
     });
+  }
+
+  updateState(event: any, itemID: number)
+  {
+    let state: number;
+    if (event.target.checked)
+    {
+      state = 1;
+    }
+    if (!event.target.checked)
+    {
+      state = 0;
+    }
+    console.log(' **** Debug - Update selected Item : ' + event.target.value);
+    this.db.updateItemState(state, itemID);
   }
 
   getDayOfWeek(date: number)
