@@ -6,6 +6,7 @@ import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
 import { Platform } from '@ionic/angular';
 import ShoppingList from './Shopping_List';
 import ItemOfList from './ItemOfList';
+import SuggestedWord from './SuggestedWord';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class DatabaseService {
   shoppingLists = new BehaviorSubject([]);
   specificShoppingList = new BehaviorSubject([]);
   itemsOFList = new BehaviorSubject([]);
+  suggestedItemsOFList = new BehaviorSubject([]);
 
   constructor(private plt: Platform, private sqlitePorter: SQLitePorter, private sqlite: SQLite, private http: HttpClient) {
     this.plt.ready().then(() => {
@@ -143,7 +145,6 @@ export class DatabaseService {
 
     private loadListItems(listId: number)
     {
-        console.log(' **** Service is loading the list of items.');
         const data = [listId];
         return this.database.executeSql('SELECT * FROM list_items WHERE list_id = ?', data ).then( res => {
             const items: ItemOfList[] = [];
@@ -179,6 +180,50 @@ export class DatabaseService {
             this.loadLists();
         }).catch( e => {
             console.log(' ERROR : Unable to update date time Due.');
+            console.error(e);
+        });
+    }
+
+    getSuggestedWords(word: string)
+    {
+        this.fetchSimilarWords(word);
+        return this.suggestedItemsOFList.asObservable();
+    }
+
+    fetchSimilarWords(word: string)
+    {
+        // TO-DO , sqlite doesnt init a regex() by default. Nee to try create this and use it here to return a smarter set of items.
+        // const regEx = String('/\b(\w*' + word + 'be\w*)\b/ig');
+        // console.log(' **** Creating RegEx : ' + regEx );
+        const regEx = String( word + '%');
+        console.log(' **** Creating RegEx : ' + regEx );
+        const data = [regEx];
+        return this.database.executeSql('SELECT item_id, item_name FROM items WHERE item_name LIKE ?', data ).then( res => {
+            const items: SuggestedWord[] = [];
+            if ( res.rows.length > 0)
+            {
+                for (let i = 0; i < res.rows.length; i++)
+                {
+                    items.push(
+                        {
+                            itemID: res.rows.item(i).item_id,
+                            itemName: res.rows.item(i).item_name,
+                        });
+                }
+            }
+            this.suggestedItemsOFList.next(items);
+        }).catch( e => {
+            console.log(' ERROR : Unable to find a collection of items for this list.');
+            console.error(e);
+        });
+    }
+
+    deleteList(listId: number)
+    {
+        return this.database.executeSql('DELETE from lists WHERE list_id=?', [listId]).then(_ => {
+            this.loadLists();
+        }).catch( e => {
+            console.log(' ERROR : Unable to delete a list.');
             console.error(e);
         });
     }

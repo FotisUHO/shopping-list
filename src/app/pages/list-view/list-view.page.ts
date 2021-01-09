@@ -3,6 +3,7 @@ import {DatabaseService} from '../../services/database.service';
 import ShoppingList from '../../services/Shopping_List';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs';
+import SuggestedWord, {SuggestedWordImpl} from '../../services/SuggestedWord';
 
 @Component({
   selector: 'app-list-view',
@@ -25,7 +26,8 @@ export class ListViewPage implements OnInit {
   itemName: string;
   itemsOfList: Observable<any>;
 
-  customPickerOptions: any;
+  similarWords: Observable<any>;
+  similarWordsArray: SuggestedWord[];
 
   // tslint:disable-next-line:no-shadowed-variable
   constructor(private route: ActivatedRoute, private db: DatabaseService, private router: Router) {
@@ -81,6 +83,42 @@ export class ListViewPage implements OnInit {
     this.itemName = '';
   }
 
+  provideSimilarItems(event: any)
+  {
+    let ids: number[];
+    let names: string[];
+    this.db.getSuggestedWords(event.target.value).subscribe( (res: SuggestedWord[]) => {
+      ids = res.map(x => x.itemID);
+      names = res.map(y => y.itemName);
+    });
+    let i = 0;
+    // ids.forEach( arr => {
+    //   const suggestedWordAr = {} as SuggestedWordImpl;
+    //   suggestedWordAr.itemID = ids[i];
+    //   suggestedWordAr.itemName = names[i];
+    //   i++;
+    // }).then(() => {
+    //   console.log(' **** Debug - Provide similar words : ' + ids[i] + ':' + names[i]);
+    // };
+    for ( const items of ids)
+    {
+      console.log(' **** Debug - Provide similar words : ' + ids[i] + ':' + names[i]);
+      const suggestedWordAr = {} as SuggestedWordImpl;
+      suggestedWordAr.itemID = ids[i];
+      suggestedWordAr.itemName = names[i];
+      // const item: SuggestedWord = new SuggestedWordImpl(items, names[i]);
+      this.similarWordsArray.push(suggestedWordAr);
+      i++;
+    }
+    // this.db.getDatabaseState().subscribe( rdyMessage => {
+    //   if (rdyMessage)
+    //   {
+    //     this.similarWords = this.db.getSuggestedWords(event.target.value);
+    //   }
+    //   console.log(' **** Debug - Provide similar words : ');
+    // });
+  }
+
   getPrettyTimestamp(sqliteΤimestamp: string)
   {
     const whitespaceChar = ' ';
@@ -88,6 +126,16 @@ export class ListViewPage implements OnInit {
     const date = timestamp[0].split('-');
     const month: number = (+date[1]) - 1;
     return (date[2] + whitespaceChar + this.getMonth((month)) + whitespaceChar + date[0]);
+  }
+
+  deleteList()
+  {
+    this.db.deleteList(this.listId).then( () => {
+      this.router.navigateByUrl('/');
+    }).catch( e => {
+      console.log(' ERROR : Unable to find a collection of items for this list.');
+      console.error(e);
+    });
   }
 
   getDayOfWeek(date: number)
@@ -164,16 +212,4 @@ export class ListViewPage implements OnInit {
         break;
     }
   }
-  // getList(id: number)
-  // {
-  //   this.route.paramMap.subscribe(params => {
-  //     const listId = params.get('id');
-  //     this.db.getSpecificList(listId).then( data => {
-  //       this.shoppingList = data;
-  //       // this.ShoppingListString = this.shoppingList.name;
-  //       console.log('**** List name : ' + this.shoppingList.name);
-  //     });
-  //   });
-  // }
-
 }
