@@ -241,7 +241,7 @@ export class DatabaseService {
     {
         const dates = [startTimestamp, endTimestamp];
         const ids = [1, 3];
-        return this.database.executeSql('SELECT * from lists WHERE list_id BETWEEN ? AND ?', [ids.toString()]).then(res =>
+        return this.database.executeSql('SELECT * from lists WHERE time_due BETWEEN ? AND ?', [dates.toString()]).then(res =>
         // return this.database.executeSql('SELECT * from lists WHERE time_due BETWEEN ? AND ? ', [dates]).then(res =>
         {
             if (!res.empty)
@@ -299,15 +299,15 @@ export class DatabaseService {
     private loadFutureLists()
     {
         this.DateObject = new Date();
-        const currentDate = new Date('01/10/2021');
-        const currentDateEnd = new Date('01/16/2021');
-        const nextWeekDate = new Date('01/17/2021');
-        const nextWeekDateEnd = new Date('02/01/2021');
-        const nextMonthDate = new Date('02/10/2021');
-        const nextMonthDateEnd = new Date('02/10/2022s');
-        this.getListsPerDate('2021/01/01', '2021/01/15', FutureTime.NextDays);
-        // this.getListsPerDate(nextWeekDate, nextWeekDateEnd, FutureTime.NextWeek);
-        // this.getListsPerDate(nextMonthDate, nextMonthDateEnd, FutureTime.NextMonth);
+        const currentDate = new Date();
+        const currentDateEnd = new Date().setDate(new Date().getDate() + 6);
+        const nextWeekDate = new Date().setDate(new Date().getDate() + 7);
+        const nextWeekDateEnd = new Date().setDate(new Date().getDate() + 14);
+        const nextMonthDate = new Date().setDate(new Date().getDate() + 15);
+        const nextMonthDateEnd = new Date().setDate(new Date().getDate() + 120);
+        this.getListsPerDate(currentDate.toString(), currentDateEnd.toString(), FutureTime.NextDays);
+        this.getListsPerDate(nextWeekDate.toString(), nextWeekDateEnd.toString(), FutureTime.NextWeek);
+        this.getListsPerDate(nextMonthDate.toString(), nextMonthDateEnd.toString(), FutureTime.NextMonth);
     }
 
     getNextDaysList(): Observable<any[]>

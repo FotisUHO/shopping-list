@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {DatabaseService} from '../../services/database.service';
+// @ts-ignore
 import ShoppingList from '../../services/Shopping_List';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs';
+// @ts-ignore
 import SuggestedWord, {SuggestedWordImpl} from '../../services/SuggestedWord';
 
 @Component({

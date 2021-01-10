@@ -1,15 +1,18 @@
 <ion-header>
   <ion-toolbar>
+    <ion-item>
     <ion-buttons left>
       <ion-button [routerLink]="['/' + 'main']">
         <ion-icon name="home-sharp"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title>Future Lists</ion-title>
+    </ion-item>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-badge color="primary">Next Days</ion-badge>
   <ion-scroll style="height: 200px">
     <ion-list>
       <div *ngFor="let list of shoppingListCollectionNextDays | async ">
@@ -24,6 +27,7 @@
   </ion-scroll>
 </ion-content>
 <ion-content>
+  <ion-badge color="success">Next Week</ion-badge>
   <ion-scroll style="height: 200px">
     <ion-list>
       <div *ngFor="let list of shoppingListCollectionNextWeek | async ">
@@ -38,6 +42,7 @@
   </ion-scroll>
 </ion-content>
 <ion-content>
+  <ion-badge color="secondary">Following Weeks</ion-badge>
   <ion-scroll style="height: 200px">
     <ion-list>
       <div *ngFor="let list of shoppingListCollectionNextMonths | async ">

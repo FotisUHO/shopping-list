@@ -30,14 +30,4 @@ export class FutureListPage implements OnInit {
       }
     });
   }
-
-  getPrettyTimestamp(sqliteΤimestamp: string)
-  {
-    // const whitespaceChar = ' ';
-    // const timestamp = sqliteΤimestamp.split(' ');
-    // const date = timestamp[0].split('-');
-    // const month: number = (+date[1]) - 1;
-    // return (date[2] + whitespaceChar + this.getMonth((month)) + whitespaceChar + date[0]);
-  }
-
 }
