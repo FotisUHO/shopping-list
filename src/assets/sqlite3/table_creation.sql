@@ -47,7 +47,3 @@ foreign key (list_id)
 references item_group (item_id)
 on delete cascade
 on update no action);
-
-INSERT INTO lists (list_name) VALUES ('Super Market');
-INSERT INTO lists (list_name) VALUES ('Butcher');
-INSERT INTO lists (list_name) VALUES ('Pharmacy');
