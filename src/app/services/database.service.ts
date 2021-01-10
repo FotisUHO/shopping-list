@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { SQLitePorter } from '@ionic-native/sqlite-porter/ngx';
-import { HttpClient } from '@angular/common/http';
-import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
-import { Platform } from '@ionic/angular';
-import ShoppingList from './Shopping_List';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {SQLitePorter} from '@ionic-native/sqlite-porter/ngx';
+import {HttpClient} from '@angular/common/http';
+import {SQLite, SQLiteObject} from '@ionic-native/sqlite/ngx';
+import {Platform} from '@ionic/angular';
+import ShoppingList, {FutureTime} from './Shopping_List';
 import ItemOfList from './ItemOfList';
 import SuggestedWord from './SuggestedWord';
 
@@ -16,9 +16,15 @@ export class DatabaseService {
   private dbReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   shoppingLists = new BehaviorSubject([]);
+  shoppingListsNextWeek = new BehaviorSubject([]);
+  shoppingListsNextMonth = new BehaviorSubject([]);
+  shoppingListsNextDays = new BehaviorSubject([]);
   specificShoppingList = new BehaviorSubject([]);
   itemsOFList = new BehaviorSubject([]);
   suggestedItemsOFList = new BehaviorSubject([]);
+
+  DateObject: Date;
+  FutureTimeType: FutureTime;
 
   constructor(private plt: Platform, private sqlitePorter: SQLitePorter, private sqlite: SQLite, private http: HttpClient) {
     this.plt.ready().then(() => {
@@ -39,7 +45,7 @@ export class DatabaseService {
           this.sqlitePorter.importSqlToDb(this.database, sql)
               .then(_ => {
                   this.loadLists();
-                  // this.loadListItems();
+                  this.loadFutureLists();
                   console.log('***** Debug - Init Database');
                   this.dbReady.next(true);
               })
@@ -84,6 +90,7 @@ export class DatabaseService {
       this.database.executeSql('INSERT INTO lists (list_name) VALUES (?)', data).then(sqlAnswer => {
           console.log('***** Debug - Adding Shopping List : ' + listname);
           this.loadLists();
+          this.loadFutureLists();
       });
   }
 
@@ -178,6 +185,7 @@ export class DatabaseService {
         this.database.executeSql('UPDATE lists SET time_due = ? WHERE list_id IS ?', data).then( res =>
         {
             this.loadLists();
+            this.loadFutureLists();
         }).catch( e => {
             console.log(' ERROR : Unable to update date time Due.');
             console.error(e);
@@ -222,15 +230,56 @@ export class DatabaseService {
     {
         return this.database.executeSql('DELETE from lists WHERE list_id=?', [listId]).then(_ => {
             this.loadLists();
+            this.loadFutureLists();
         }).catch( e => {
             console.log(' ERROR : Unable to delete a list.');
             console.error(e);
         });
     }
 
-    getListsPerDate(startTimestamp: string, endTimestamp): Observable<any[]>
+    getListsPerDate(startTimestamp: string, endTimestamp: string, typeOfFutureList: FutureTime )
     {
-        return undefined;
+        const dates = [startTimestamp, endTimestamp];
+        const ids = [1, 3];
+        return this.database.executeSql('SELECT * from lists WHERE list_id BETWEEN ? AND ?', [ids.toString()]).then(res =>
+        // return this.database.executeSql('SELECT * from lists WHERE time_due BETWEEN ? AND ? ', [dates]).then(res =>
+        {
+            if (!res.empty)
+            {
+                const lists = [];
+                for (let i = 0; i < res.rows.length; i++)
+                {
+                    lists.push(
+                        {
+                            id: res.rows.item(i).list_id,
+                            name: res.rows.item(i).list_name,
+                            created: res.rows.item(i).time_created,
+                            due: res.rows.item(i).time_due,
+                            type: res.rows.item(i).type_id,
+                            list_size: 0
+                        });
+                    console.log('**** : Retrieve list  : ' + res.rows.item(i).list_name);
+                }
+                switch (typeOfFutureList)
+                {
+                    case FutureTime.NextDays:
+                        this.shoppingListsNextDays.next(lists);
+                        break;
+                    case FutureTime.NextMonth:
+                        this.shoppingListsNextMonth.next(lists);
+                        break;
+                    case FutureTime.NextWeek:
+                        this.shoppingListsNextWeek.next(lists);
+                        break;
+                    default:
+                        console.log('Error: Unknown type of future list.');
+                        break;
+                }
+            }
+        }).catch(e => {
+            console.log('ERROR : Unable to read future lists from database : ');
+            console.error(e);
+        });
     }
 
     updateItemState(value: number, itemID: number)
@@ -240,11 +289,40 @@ export class DatabaseService {
         this.database.executeSql('UPDATE list_items SET state = ? WHERE list_item_id IS ?', data).then( res =>
         {
             this.loadLists();
+            this.loadFutureLists();
         }).catch( e => {
             console.log(' ERROR : Unable to update date time Due.');
             console.error(e);
         });
     }
-}
 
+    private loadFutureLists()
+    {
+        this.DateObject = new Date();
+        const currentDate = new Date('01/10/2021');
+        const currentDateEnd = new Date('01/16/2021');
+        const nextWeekDate = new Date('01/17/2021');
+        const nextWeekDateEnd = new Date('02/01/2021');
+        const nextMonthDate = new Date('02/10/2021');
+        const nextMonthDateEnd = new Date('02/10/2022s');
+        this.getListsPerDate('2021/01/01', '2021/01/15', FutureTime.NextDays);
+        // this.getListsPerDate(nextWeekDate, nextWeekDateEnd, FutureTime.NextWeek);
+        // this.getListsPerDate(nextMonthDate, nextMonthDateEnd, FutureTime.NextMonth);
+    }
+
+    getNextDaysList(): Observable<any[]>
+    {
+        return this.shoppingListsNextDays.asObservable();
+    }
+
+    getNextWeekList(): Observable<any[]>
+    {
+        return this.shoppingListsNextWeek.asObservable();
+    }
+
+    getNextMonthList(): Observable<any[]>
+    {
+        return this.shoppingListsNextMonth.asObservable();
+    }
+}
 

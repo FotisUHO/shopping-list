@@ -8,10 +8,12 @@
                             <ion-icon name="home-sharp"></ion-icon>
                         </ion-button>
                     </ion-buttons>
-                    <ion-title right>  {{ShoppingListString}}</ion-title>
+                    <ion-title>
+                        <ion-label align="center">{{ShoppingListString}}</ion-label>
+                    </ion-title>
                     <ion-buttons right>
                         <ion-button (click)="deleteList()">
-                            <ion-icon name="trash-bin-outline"></ion-icon>
+                            <ion-icon name="trash-bin"></ion-icon>
                         </ion-button>
                     </ion-buttons>
                 </ion-item>
@@ -36,6 +38,8 @@
                 <ion-chip color="tertiary">
                     <ion-datetime value={{dateCreated}} disabled></ion-datetime>
                 </ion-chip>
+            </ion-item>
+            <ion-item>
                 <ion-label>Date Due : </ion-label>
                 <ion-chip color="tertiary">
 <!--                    <ion-datetime value={{dateDue}} placeholder="Select Date"></ion-datetime>-->
@@ -71,8 +75,8 @@
                     <ion-label>
                         <h2>{{ item.name }}</h2>
                     </ion-label>
-<!--                    <ion-checkbox color="secondary" (ionChange)="updateState($event, item.id)" checked="{{item.state === 0?false: true}}" slot="start"></ion-checkbox>-->
-                    <ion-checkbox color="secondary" (ionChange)="updateState($event, item.id)" checked="{{!!item.state}}" slot="start"></ion-checkbox>
+                    <ion-checkbox color="secondary" (ionChange)="updateState($event, item.id)" checked="{{item.state === 0?false: true}}" slot="start"></ion-checkbox>
+<!--                    <ion-checkbox color="secondary" (ionChange)="updateState($event, item.id)" checked="{{!!item.state}}" slot="start"></ion-checkbox>-->
                 </ion-item>
             </div>
         </ion-list>

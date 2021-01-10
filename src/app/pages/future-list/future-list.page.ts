@@ -11,24 +11,22 @@ import {strict} from 'assert';
 })
 export class FutureListPage implements OnInit {
 
-  DateObject: Date;
-
   shoppingListCollectionNextDays: Observable<any[]>;
   shoppingListCollectionNextWeek: Observable<any[]>;
   shoppingListCollectionNextMonths: Observable<any[]>;
 
   constructor(private db: DatabaseService)
   {
-    this.DateObject = new Date();
+
   }
 
   ngOnInit() {
     this.db.getDatabaseState().subscribe( rdyMessage => {
       if (rdyMessage)
       {
-        // this.shoppingListCollectionNextDays = this.db.getListsPerDate();
-        // this.shoppingListCollectionNextWeek = this.db.getListsPerDate( );
-        // this.shoppingListCollectionNextMonths = this.db.getListsPerDate(startTimestamp: string, endTimestamp: string );
+        this.shoppingListCollectionNextDays = this.db.getNextDaysList();
+        this.shoppingListCollectionNextWeek = this.db.getNextWeekList();
+        this.shoppingListCollectionNextMonths = this.db.getNextMonthList();
       }
     });
   }

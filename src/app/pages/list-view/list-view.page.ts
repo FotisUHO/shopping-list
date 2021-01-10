@@ -29,6 +29,8 @@ export class ListViewPage implements OnInit {
   similarWords: Observable<any>;
   similarWordsArray: SuggestedWord[];
 
+  selected: boolean;
+
   // tslint:disable-next-line:no-shadowed-variable
   constructor(private route: ActivatedRoute, private db: DatabaseService, private router: Router) {
     const today = new Date();
@@ -79,8 +81,11 @@ export class ListViewPage implements OnInit {
 
   addItem()
   {
-    this.db.addItem(this.itemName, this.listId);
-    this.itemName = '';
+    if (this.itemName.length > 0)
+    {
+      this.db.addItem(this.itemName, this.listId);
+      this.itemName = '';
+    }
   }
 
   provideSimilarItems(event: any)

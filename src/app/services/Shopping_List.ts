@@ -8,6 +8,13 @@ export default interface ShoppingList
     list_size: number;
 }
 
+export enum FutureTime
+{
+    NextDays,
+    NextWeek,
+    NextMonth
+}
+
 // export class ShoppingList
 // {
 //     id: number;

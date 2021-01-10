@@ -24,7 +24,7 @@
 <!--  <ion-item [routerLink]="['/' + 'list-view']">-->
 <!--    <ion-icon name="add-circle-outline"></ion-icon>-->
 <!--  </ion-item>-->
-  <ion-button expand="block"> Future Lists</ion-button>
+  <ion-button expand="block" [routerLink]="['/' + 'future-list' + '/' ]"> Future Lists</ion-button>
   <ion-scroll style="height: 200px">
   <ion-list>
     <div *ngFor="let list of shoppingListCollection | async ">
